@@ -31,15 +31,22 @@ const roomSchema = new mongoose.Schema(
       required: [true, '價格必填'],
     },
     rating: Number,
+    // 若不使用內建 timestamps: true，也可自定 createAt 規則。
+    createdAt: {
+      type: Date,
+      default: Date.now,
+      select: false, // false 表不顯示此欄位。 .find() 查不出來
+    },
   },
   {
     versionKey: false,
-    // collection: 'rooms' // 亦可直接寫死 collection 名字，不受預設小寫及結尾s影響。
+    // collection: 'rooms', // 亦可直接寫死 collection 名字，不受預設小寫及結尾s影響。
+    // timestamps: true, // mongoose 會自動新增 createdAt 和 updatedAt 欄位。
   }
 );
 
 // 3. 建立 room model
-const Room = mongoose.model('Room', roomSchema);
+const RoomModel = mongoose.model('Room', roomSchema);
 /* 
   注意：
   mongoose 會將 'Room' 轉換為 mongodb collection 的 'rooms'。
@@ -47,14 +54,14 @@ const Room = mongoose.model('Room', roomSchema);
   結尾強制加 s ，若結尾已有 s 則不會加。
 */
 
-// 4. 建立 room instance
-const roomDoc = new Room({
-  name: '豪華蜜月套房+',
+// 4. 新增資料方法1：建立 RoomModel 實例並使用 save() 將資料寫入 mongodb
+/* 
+const roomDoc = new RoomModel({
+  name: '豪華蜜月套房456',
   price: 7000,
   rating: 4.8,
 });
 
-// 5. 使用 .save() 將資料寫入 mongodb
 roomDoc
   .save()
   .then(() => {
@@ -63,6 +70,18 @@ roomDoc
   .catch((err) => {
     console.log(err);
   });
+*/
+
+// 4. 新增資料方法2：使用 create()
+RoomModel.create({
+  name: '豪華蜜月套房1',
+  price: 7000,
+  rating: 4.8,
+})
+  .then((data) => {
+    console.log('create 資料成功', data);
+  })
+  .catch((err) => console.log(err));
 
 const requestListener = (req, res) => {
   console.log(req.url);
