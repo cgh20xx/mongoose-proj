@@ -1,0 +1,22 @@
+{
+  "name": "mongoose-proj",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/cgh20xx/mongoose-proj.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/cgh20xx/mongoose-proj/issues"
+  },
+  "homepage": "https://github.com/cgh20xx/mongoose-proj#readme",
+  "dependencies": {
+    "mongoose": "^6.2.10"
+  }
+}
