@@ -24,7 +24,7 @@ const roomSchema = new mongoose.Schema(
     createdAt: {
       type: Date,
       default: Date.now,
-      select: false, // false 表不顯示此欄位。 .find() 查不出來
+      select: false, // false 表不顯示此欄位。Model.find() 查不出來
     },
   },
   {

@@ -1,6 +1,7 @@
 const http = require('http');
 const mongoose = require('mongoose');
 const RoomModel = require('./model/room-model');
+const headers = require('./headers');
 const db = 'hotel';
 
 // 1. 連接資料庫
@@ -30,18 +31,28 @@ roomDoc
 */
 
 // 4. 新增資料方法2：使用 create()
-RoomModel.create({
-  name: '豪華蜜月套房 module',
-  price: 7000,
-  rating: 4.8,
-})
-  .then((data) => {
-    console.log('create 資料成功', data);
-  })
-  .catch((err) => console.log(err));
+// RoomModel.create({
+//   name: '豪華蜜月套房 module',
+//   price: 7000,
+//   rating: 4.8,
+// })
+//   .then((data) => {
+//     console.log('create 資料成功', data);
+//   })
+//   .catch((err) => console.log(err));
 
-const requestListener = (req, res) => {
-  console.log(req.url);
+const requestListener = async (req, res) => {
+  if (req.url === '/rooms' && req.method === 'GET') {
+    // Model.find() 文件：https://mongoosejs.com/docs/api/model.html#model_Model.find
+    const rooms = await RoomModel.find();
+    res.writeHead(200, headers);
+    res.write(
+      JSON.stringify({
+        status: 'success',
+        rooms,
+      })
+    );
+  }
   res.end();
 };
 
