@@ -30,18 +30,12 @@ roomDoc
   });
 */
 
-// 4. 新增資料方法2：使用 create()
-// RoomModel.create({
-//   name: '豪華蜜月套房 module',
-//   price: 7000,
-//   rating: 4.8,
-// })
-//   .then((data) => {
-//     console.log('create 資料成功', data);
-//   })
-//   .catch((err) => console.log(err));
-
 const requestListener = async (req, res) => {
+  let body = '';
+  req.on('data', (chunk) => {
+    body += chunk;
+  });
+
   if (req.url === '/rooms' && req.method === 'GET') {
     // Model.find() 文件：https://mongoosejs.com/docs/api/model.html#model_Model.find
     const rooms = await RoomModel.find();
@@ -52,8 +46,39 @@ const requestListener = async (req, res) => {
         rooms,
       })
     );
+    res.end();
+  } else if (req.url === '/rooms' && req.method === 'POST') {
+    req.on('end', async () => {
+      try {
+        const data = JSON.parse(body);
+        // 4. 新增資料方法2：使用 create()
+        const newRoom = await RoomModel.create({
+          name: data.name,
+          price: data.price,
+          rating: data.rating,
+        });
+        res.writeHead(200, headers);
+        res.write(
+          JSON.stringify({
+            status: 'success',
+            rooms: newRoom,
+          })
+        );
+        res.end();
+      } catch (err) {
+        console.log(err);
+        res.writeHead(400, headers);
+        res.write(
+          JSON.stringify({
+            status: 'error',
+            message: '欄位沒有正確，或沒有此 ID',
+            error: err,
+          })
+        );
+        res.end();
+      }
+    });
   }
-  res.end();
 };
 
 const server = http.createServer(requestListener);
