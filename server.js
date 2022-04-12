@@ -37,6 +37,7 @@ const requestListener = async (req, res) => {
   });
 
   if (req.url === '/rooms' && req.method === 'GET') {
+    // 查詢所有資料
     // Model.find() 文件：https://mongoosejs.com/docs/api/model.html#model_Model.find
     const rooms = await RoomModel.find();
     res.writeHead(200, headers);
@@ -48,6 +49,7 @@ const requestListener = async (req, res) => {
     );
     res.end();
   } else if (req.url === '/rooms' && req.method === 'POST') {
+    // 新增單筆資料
     req.on('end', async () => {
       try {
         const data = JSON.parse(body);
@@ -66,7 +68,6 @@ const requestListener = async (req, res) => {
         );
         res.end();
       } catch (err) {
-        console.log(err);
         res.writeHead(400, headers);
         res.write(
           JSON.stringify({
@@ -78,7 +79,8 @@ const requestListener = async (req, res) => {
         res.end();
       }
     });
-  } else if ((req.url = '/rooms' && req.method == 'DELETE')) {
+  } else if (req.url === '/rooms' && req.method === 'DELETE') {
+    // 刪除所有資料
     await RoomModel.deleteMany({});
     res.writeHead(200, headers);
     res.write(
@@ -88,6 +90,63 @@ const requestListener = async (req, res) => {
       })
     );
     res.end();
+  } else if (req.url.startsWith('/rooms/') && req.method === 'DELETE') {
+    try {
+      // 刪除單筆資料
+      const id = req.url.split('/').pop();
+      await RoomModel.findByIdAndDelete(id);
+      // 重新取得所有資料
+      const rooms = await RoomModel.find();
+      res.writeHead(200, headers);
+      res.write(
+        JSON.stringify({
+          status: 'success',
+          rooms: rooms,
+        })
+      );
+      res.end();
+    } catch (err) {
+      res.writeHead(400, headers);
+      res.write(
+        JSON.stringify({
+          status: 'error',
+          message: '欄位沒有正確，或沒有此 ID',
+          error: err,
+        })
+      );
+      res.end();
+    }
+  } else if (req.url.startsWith('/rooms/') && req.method === 'PATCH') {
+    // 修改單筆資料
+    req.on('end', async () => {
+      try {
+        const id = req.url.split('/').pop();
+        const data = JSON.parse(body);
+        await RoomModel.findByIdAndUpdate(id, {
+          name: data.name,
+        });
+        // 重新取得所有資料
+        const rooms = await RoomModel.find();
+        res.writeHead(200, headers);
+        res.write(
+          JSON.stringify({
+            status: 'success',
+            rooms: rooms,
+          })
+        );
+        res.end();
+      } catch (err) {
+        res.writeHead(400, headers);
+        res.write(
+          JSON.stringify({
+            status: 'error',
+            message: '欄位沒有正確，或沒有此 ID',
+            error: err,
+          })
+        );
+        res.end();
+      }
+    });
   } else if (req.method == 'OPTIONS') {
     res.writeHead(200, headers);
     res.end();
