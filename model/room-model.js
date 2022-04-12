@@ -18,6 +18,7 @@ const roomSchema = new mongoose.Schema(
     price: {
       type: Number,
       required: [true, '價格必填'],
+      cast: false, // false 關閉自動轉型。如："100" => 100
     },
     rating: Number,
     // 若不使用內建 timestamps: true，也可自定 createAt 規則。
