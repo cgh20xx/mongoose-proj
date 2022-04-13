@@ -5,7 +5,6 @@ const dotenv = require('dotenv');
 const headers = require('./headers');
 dotenv.config({ path: './my.env' });
 
-console.log(process.env);
 const dbConn = process.env.DB_CONN.replace(
   '<password>',
   process.env.DB_PASSWORD
