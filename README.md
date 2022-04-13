@@ -6,5 +6,5 @@
   - package.json 新增 scripts.start
   - package.json 新增 engines.node 版本
   - 建立新的主機 指令：heroku create
-  - 在 heroku 後台設定 Config Vars (主機的環境變數)
+  - 在 heroku 後台設定 Config Vars 並重啟 Restart all Dynos
   - $ git push heroku master
